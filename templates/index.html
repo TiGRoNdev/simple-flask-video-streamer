@@ -1,0 +1,16 @@
+<html>
+    <meta title="movie stream"/>
+    <video id="main-movie-stream" src="{{ movie }}" controls style="padding: 0; margin: 0;">
+    </video>
+
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous">
+    </script>
+
+    <script>
+        $("#main-movie-stream").attr("width", window.innerWidth );
+        $("#main-movie-stream").attr("height", window.innerHeight);
+    </script>
+</html>
