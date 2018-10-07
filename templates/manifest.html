@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video-catalog</title>
+</head>
+<body>
+{% for url_tuple in manifest %}
+    <a href="/{{ url_tuple[1] }}">{{ url_tuple[0] }}</a>
+{% endfor %}
+</body>
+</html>

@@ -17,19 +17,31 @@ from flask import Flask
 LOG = logging.getLogger(__name__)
 app = Flask(__name__)
 
-MOVIE_PATH = "/home/media/mnt"
+MOVIE_PATH = "/home/media/media"
 LOG_PATH = "/home/logs/stream.log"
 MB = 1 << 20
 BUFF_SIZE = 10 * MB
 
 
-@app.route('/<string:movie_url>')
-def home(movie_url):
-    LOG.info("REQUEST @ DT {} @ HEADERS {}".format(datetime.now(), request.headers))
+@app.route('/movie/<string:movie_url>')
+def get_movie(movie_url):
     response = render_template(
         'index.html',
         time=str(datetime.now()),
         movie='/stream/{}'.format(movie_url),
+    )
+    return response
+
+
+@app.route('/')
+def index():
+    LOG.info("%%%__REQUEST__%%% {}\n@HEADERS@\n{}\n%%%__END_REQUEST__%%%".format(
+        datetime.now(),
+        request.headers
+    ))
+    response = render_template(
+        'manifest.html',
+        manifest=get_manifest(),
     )
     return response
 
@@ -100,6 +112,13 @@ def get_range(req):
         return start, end
     else:
         return 0, None
+
+
+def get_manifest():
+    with open(MOVIE_PATH + "manifest.json") as f:
+        manifest = json.load(f)
+
+    return {k: v[2:] for k, v in manifest.items()}
 
 
 @app.route('/stream/<string:movie_name>')
