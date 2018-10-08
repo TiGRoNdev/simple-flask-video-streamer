@@ -17,7 +17,7 @@ from flask import Flask
 LOG = logging.getLogger(__name__)
 app = Flask(__name__)
 
-MOVIE_PATH = "/home/media/media"
+MOVIE_PATH = "/home/media/media/"
 LOG_PATH = "/home/logs/stream.log"
 MB = 1 << 20
 BUFF_SIZE = 10 * MB
@@ -41,7 +41,7 @@ def index():
     ))
     response = render_template(
         'manifest.html',
-        manifest=get_manifest(),
+        manifest=get_manifest().items(),
     )
     return response
 
@@ -118,12 +118,12 @@ def get_manifest():
     with open(MOVIE_PATH + "manifest.json") as f:
         manifest = json.load(f)
 
-    return {k: v[2:] for k, v in manifest.items()}
+    return {k: v[2:].replace("/", "@^@").replace("&", "@AMP@").replace("?", "@QUE@").replace("=", "@EQ@") for k, v in manifest.items()}
 
 
 @app.route('/stream/<string:movie_name>')
 def stream_movie(movie_name):
-    path = '{movie_path}/{movie_name}'.format(movie_path=MOVIE_PATH, movie_name=movie_name)
+    path = '{movie_path}{movie_name}'.format(movie_path=MOVIE_PATH, movie_name=movie_name.replace("@^@", "/").replace("@AMP@", "&").replace("@QUE@", "?").replace("@EQ@", "="))
 
     start, end = get_range(request)
     return partial_response(path, start, end)
